@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lettre de Motivation - Alexandre Marquant</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+        }
+
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1400px;
+            background: rgba(15, 15, 25, 0.7);
+            backdrop-filter: blur(30px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: 12px 30px;
+        }
+
+        nav .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-left a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-right {
+            list-style: none;
+            display: flex;
+            gap: 5px;
+        }
+
+        .menu-right li a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .menu-right li a:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .burger span {
+            width: 28px;
+            height: 2.5px;
+            background: white;
+            margin: 3px 0;
+        }
+
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 140px 40px 80px;
+        }
+
+        .letter-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .letter-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1, #ec4899);
+            border-radius: 32px 32px 0 0;
+        }
+
+        .letter-header {
+            margin-bottom: 40px;
+        }
+
+        .letter-sender {
+            margin-bottom: 30px;
+        }
+
+        .letter-sender h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .letter-sender p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        .letter-date {
+            text-align: right;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        .letter-object {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .letter-body {
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.9;
+            font-size: 1.05rem;
+        }
+
+        .letter-body p {
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+
+        .letter-signature {
+            margin-top: 50px;
+            text-align: right;
+        }
+
+        .letter-signature p {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(236, 72, 153, 0.3));
+            color: white;
+            padding: 18px 36px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.4s ease;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            margin-top: 40px;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(236, 72, 153, 0.5));
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        .letter-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 968px) {
+            .menu-right {
+                position: fixed;
+                left: -100%;
+                top: 80px;
+                width: calc(100% - 40px);
+                background: rgba(15, 15, 25, 0.98);
+                flex-direction: column;
+                padding: 20px;
+                border-radius: 20px;
+                transition: left 0.4s ease;
+                margin-left: 20px;
+            }
+
+            .menu-right.active {
+                left: 0;
+            }
+
+            .burger {
+                display: flex;
+            }
+
+            .letter-container {
+                padding: 40px 25px;
+            }
+
+            .main-content {
+                padding: 120px 20px 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <nav>
+        <div class="nav-container">
+            <ul class="menu-left">
+                <li><a href="index.html">AM</a></li>
+            </ul>
+            
+            <ul class="menu-right" id="menuRight">
+                <li><a href="index.html">🏠 Accueil</a></li>
+                <li><a href="cv.html">📋 CV</a></li>
+                <li><a href="projets.html">🚀 Projets</a></li>
+                <li><a href="index.html#contact">📧 Contact</a></li>
+            </ul>
+
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="letter-container">
+            <div class="letter-header">
+                <div class="letter-sender">
+                    <h2>Alexandre MARQUANT</h2>
+                    <p>
+                        54 rue des postes<br>
+                        80000 Amiens<br>
+                        📧 alexandre.marquant@saint-remi.net<br>
+                        📱 06 30 84 68 70
+                    </p>
+                </div>
+            </div>
+
+            <div class="letter-date" id="dynamicDate">
+                Amiens, le ...
+            </div>
+
+            <div class="letter-object">
+                <strong>Objet :</strong> Candidature pour un poste en administration systèmes et réseaux
+            </div>
+
+            <div class="letter-body">
+                <p>Madame, Monsieur,</p>
+
+                <p>
+                    Actuellement étudiant en BTS Services Informatiques aux Organisations, option Solutions 
+                    d'Infrastructure, Systèmes et Réseaux (SISR), je suis à la recherche de nouvelles opportunités 
+                    pour mettre en pratique mes compétences techniques dans un environnement professionnel stimulant. 
+                    Passionné par l'infrastructure IT, je souhaite intégrer une équipe technique dynamique pour 
+                    contribuer activement à vos projets de déploiement et de maintenance.
+                </p>
+
+                <p>
+                    Au cours de ma formation et de mes expériences pratiques, j'ai développé des compétences solides 
+                    en administration système et réseau. Je maîtrise notamment la configuration de serveurs Windows 
+                    Server et Linux, la mise en place d'infrastructures sécurisées avec segmentation VLAN, ainsi 
+                    que la virtualisation d'environnements sous Proxmox et Hyper-V.
+                </p>
+
+                <p>
+                    La sécurité informatique étant au cœur de mes préoccupations, j'ai également acquis une 
+                    expertise technique incluant la configuration de pare-feu (pfSense), la mise en œuvre de 
+                    solutions VPN et la réalisation d'audits réseau à l'aide d'outils tels que Nmap et Wireshark. 
+                    Ma curiosité naturelle me pousse à effectuer une veille technologique constante pour rester 
+                    à jour sur les meilleures pratiques du secteur.
+                </p>
+
+                <p>
+                    Rigoureux, autonome et doté d'un fort esprit d'analyse, j'apprécie le travail en équipe et 
+                    je suis capable de m'adapter rapidement à des environnements techniques variés. Mon objectif 
+                    est d'apporter ma contribution technique tout en continuant à évoluer au contact de 
+                    professionnels expérimentés.
+                </p>
+
+                <p>
+                    Je reste à votre disposition pour un entretien au cours duquel je pourrais vous exposer plus 
+                    en détail mes motivations, mes projets réalisés et mon projet professionnel. Dans l'attente 
+                    de votre retour, je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations 
+                    distinguées.
+                </p>
+            </div>
+
+            <div class="letter-signature">
+                <p>Alexandre MARQUANT</p>
+            </div>
+
+            <div class="letter-footer">
+                <a href="lm pdf.pdf" class="download-btn" download>
+                    <span>📥</span>
+                    <span>Télécharger la version PDF</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        $(document).ready(function() {
+            // Gestion du menu burger
+            $("#burger").click(function() {
+                $(this).toggleClass("active");
+                $("#menuRight").toggleClass("active");
+            });
+
+            // Animation d'apparition
+            $(".letter-container").css({
+                'opacity': '0',
+                'transform': 'translateY(30px)'
+            });
+
+            setTimeout(() => {
+                $(".letter-container").css({
+                    'opacity': '1',
+                    'transform': 'translateY(0)',
+                    'transition': 'all 0.8s ease'
+                });
+            }, 100);
+
+            // Date du jour automatique
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date().toLocaleDateString('fr-FR', options);
+            $("#dynamicDate").text("Amiens, le " + today);
+        });
+    </script>
+</body>
+</html>

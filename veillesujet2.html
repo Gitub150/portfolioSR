@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veille - Intelligence Artificielle</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1400px;
+            background: rgba(15, 15, 25, 0.7);
+            backdrop-filter: blur(30px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: 12px 30px;
+        }
+
+        nav .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-left a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-right {
+            list-style: none;
+            display: flex;
+            gap: 5px;
+        }
+
+        .menu-right li a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .menu-right li a:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .burger span {
+            width: 28px;
+            height: 2.5px;
+            background: white;
+            margin: 3px 0;
+        }
+
+        /* Contenu Principal */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 140px 40px 80px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .page-header h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.7));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .veille-intro {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            /* Couleur spécifique IA (Violet/Bleu) au lieu de rouge */
+            border-top: 3px solid #6366f1; 
+        }
+
+        .veille-intro h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .veille-intro p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        /* Grille Articles */
+        .articles-grid {
+            display: grid;
+            gap: 30px;
+        }
+
+        .article-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .article-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .article-icon {
+            font-size: 3rem;
+            flex-shrink: 0;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .article-date {
+            background: rgba(99, 102, 241, 0.2);
+            color: #c7d2fe;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .article-tag {
+            background: rgba(139, 92, 246, 0.2);
+            color: #ddd6fe;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .article-card h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .article-card p {
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .article-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #c7d2fe;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .article-link:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        /* Sources Section */
+        .sources-section {
+            margin-top: 60px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 3px solid #6366f1;
+        }
+
+        .sources-section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .sources-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .source-item {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .source-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-3px);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .source-item a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .source-item a:hover {
+            color: #c7d2fe;
+        }
+
+        .source-item p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .menu-right {
+                position: fixed;
+                left: -100%;
+                top: 80px;
+                width: calc(100% - 40px);
+                background: rgba(15, 15, 25, 0.98);
+                flex-direction: column;
+                padding: 20px;
+                border-radius: 20px;
+                transition: left 0.4s ease;
+                margin-left: 20px;
+            }
+
+            .menu-right.active {
+                left: 0;
+            }
+
+            .burger {
+                display: flex;
+            }
+
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .main-content {
+                padding: 120px 20px 60px;
+            }
+
+            .sources-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <nav>
+        <div class="nav-container">
+            <ul class="menu-left">
+                <li><a href="index.html">Accueil</a></li>
+            </ul>
+            
+            <ul class="menu-right" id="menuRight">
+                <li><a href="index.html">🏠 Accueil</a></li>
+                <li><a href="veillesujet1.html">🔒 Cybersécurité</a></li>
+                <li><a href="cv.html">📋 CV</a></li>
+                <li><a href="index.html">📧 Contact</a></li>
+            </ul>
+
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>🤖 Intelligence Artificielle</h1>
+            <p>Ma veille technologique sur les avancées et applications de l'IA</p>
+        </div>
+
+        <div class="veille-intro">
+            <h2>Pourquoi cette veille ?</h2>
+            <p>
+                L'intelligence artificielle transforme rapidement le monde du développement logiciel et 
+                des technologies de l'information. En tant que futur professionnel du secteur, il est 
+                essentiel de suivre ces évolutions pour comprendre leur impact sur nos métiers et 
+                anticiper les compétences de demain. Cette veille me permet de rester informé des 
+                dernières innovations en IA et de leur application concrète dans le développement 
+                d'applications.
+            </p>
+        </div>
+
+        <div class="articles-grid">
+            <div class="article-card">
+                <div class="article-header">
+                    <div>
+                        <div class="article-meta">
+                            <span class="article-date">📅 Janvier 2025</span>
+                            <span class="article-tag">IA Générative</span>
+                        </div>
+                        <h3>L'essor des modèles de langage dans le développement</h3>
+                    </div>
+                    <div class="article-icon">🧠</div>
+                </div>
+                <p>
+                    Les grands modèles de langage (LLM) révolutionnent la manière dont les développeurs 
+                    écrivent du code. Des outils comme GitHub Copilot et ChatGPT permettent désormais 
+                    d'automatiser certaines tâches répétitives et d'accélérer le développement. Cette 
+                    évolution soulève des questions sur l'avenir du métier de développeur et les 
+                    compétences à privilégier.
+                </p>
+                <a href="https://github.blog/ai-and-ml/github-copilot/the-economic-impact-of-the-ai-powered-developer-lifecycle-and-lessons-from-github-copilot/" target="_blank" class="article-link">
+                    Lire l'étude GitHub →
+                </a>
+            </div>
+
+            <div class="article-card">
+                <div class="article-header">
+                    <div>
+                        <div class="article-meta">
+                            <span class="article-date">📅 Décembre 2024</span>
+                            <span class="article-tag">Machine Learning</span>
+                        </div>
+                        <h3>L'IA au service de la cybersécurité</h3>
+                    </div>
+                    <div class="article-icon">🛡️</div>
+                </div>
+                <p>
+                    Les algorithmes de machine learning sont de plus en plus utilisés pour détecter les 
+                    menaces informatiques en temps réel. L'analyse comportementale et la détection 
+                    d'anomalies permettent d'identifier des attaques sophistiquées que les systèmes 
+                    traditionnels ne peuvent pas repérer. Une avancée majeure pour la sécurité des 
+                    systèmes d'information.
+                </p>
+                <a href="https://www.microsoft.com/fr-fr/security/business/ai-machine-learning" target="_blank" class="article-link">
+                    Voir le rapport Microsoft →
+                </a>
+            </div>
+
+            <div class="article-card">
+                <div class="article-header">
+                    <div>
+                        <div class="article-meta">
+                            <span class="article-date">📅 Novembre 2024</span>
+                            <span class="article-tag">Deep Learning</span>
+                        </div>
+                        <h3>Les réseaux de neurones pour la reconnaissance d'images</h3>
+                    </div>
+                    <div class="article-icon">👁️</div>
+                </div>
+                <p>
+                    Les CNN (Convolutional Neural Networks) atteignent des performances remarquables 
+                    dans la reconnaissance d'images, avec des applications allant de la médecine à 
+                    l'automobile autonome. Ces technologies ouvrent de nouvelles possibilités pour 
+                    développer des applications intelligentes capables de comprendre et d'analyser 
+                    le contenu visuel.
+                </p>
+                <a href="https://www.nvidia.com/fr-fr/research/computer-vision/" target="_blank" class="article-link">
+                    Lire les avancées NVIDIA →
+                </a>
+            </div>
+
+            <div class="article-card">
+                <div class="article-header">
+                    <div>
+                        <div class="article-meta">
+                            <span class="article-date">📅 Octobre 2024</span>
+                            <span class="article-tag">Éthique IA</span>
+                        </div>
+                        <h3>Les enjeux éthiques de l'intelligence artificielle</h3>
+                    </div>
+                    <div class="article-icon">⚖️</div>
+                </div>
+                <p>
+                    Avec la démocratisation de l'IA, des questions éthiques émergent : biais 
+                    algorithmiques, respect de la vie privée, transparence des décisions automatisées. 
+                    Le règlement européen sur l'IA (AI Act) vise à encadrer ces technologies tout en favorisant 
+                    l'innovation. Un équilibre délicat à trouver pour les développeurs et les 
+                    entreprises.
+                </p>
+                <a href="https://www.cnil.fr/fr/intelligence-artificielle" target="_blank" class="article-link">
+                    Consulter le dossier CNIL →
+                </a>
+            </div>
+        </div>
+
+        <div class="sources-section">
+            <h2>📖 Mes sources de veille IA</h2>
+            <div class="sources-list">
+                <div class="source-item">
+                    <a href="https://www.actuia.com/" target="_blank" rel="noopener noreferrer">🇫🇷 ActuIA</a>
+                    <p>L'actualité de l'IA en France</p>
+                </div>
+                <div class="source-item">
+                    <a href="https://www.lebigdata.fr/intelligence-artificielle" target="_blank" rel="noopener noreferrer">📊 LeBigData</a>
+                    <p>Actualités Big Data & IA</p>
+                </div>
+                <div class="source-item">
+                    <a href="https://huggingface.co/blog" target="_blank" rel="noopener noreferrer">🤗 Hugging Face</a>
+                    <p>Communauté Open Source IA</p>
+                </div>
+                <div class="source-item">
+                    <a href="https://openai.com/news/" target="_blank" rel="noopener noreferrer">🤖 OpenAI Blog</a>
+                    <p>Avancées de ChatGPT & Dall-E</p>
+                </div>
+                <div class="source-item">
+                    <a href="https://www.cnil.fr/fr/intelligence-artificielle" target="_blank" rel="noopener noreferrer">⚖️ CNIL - IA</a>
+                    <p>Réglementation et éthique</p>
+                </div>
+                <div class="source-item">
+                    <a href="https://www.technologyreview.com/topic/artificial-intelligence/" target="_blank" rel="noopener noreferrer">🇺🇸 MIT Tech Review</a>
+                    <p>Analyses technologiques de fond</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        $(document).ready(function() {
+            $("#burger").click(function() {
+                $(this).toggleClass("active");
+                $("#menuRight").toggleClass("active");
+            });
+
+            // Animation d'apparition au scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            $('.article-card, .source-item').each(function(index) {
+                $(this).css({
+                    'opacity': '0',
+                    'transform': 'translateY(30px)',
+                    'transition': `all 0.6s ease ${index * 0.1}s`
+                });
+                observer.observe(this);
+            });
+        });
+    </script>
+</body>
+</html>

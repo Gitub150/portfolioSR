@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veille - Cybersécurité</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+        }
+
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1400px;
+            background: rgba(15, 15, 25, 0.7);
+            backdrop-filter: blur(30px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: 12px 30px;
+        }
+
+        nav .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-left a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-right {
+            list-style: none;
+            display: flex;
+            gap: 5px;
+        }
+
+        .menu-right li a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .menu-right li a:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .burger span {
+            width: 28px;
+            height: 2.5px;
+            background: white;
+            margin: 3px 0;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 140px 40px 80px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .page-header h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.7));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .veille-intro {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 3px solid #ef4444;
+        }
+
+        .veille-intro h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .veille-intro p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .articles-grid {
+            display: grid;
+            gap: 30px;
+        }
+
+        .article-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .article-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .article-icon {
+            font-size: 3rem;
+            flex-shrink: 0;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .article-date {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .article-tag {
+            background: rgba(249, 115, 22, 0.2);
+            color: #fdba74;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .article-card h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .article-card p {
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .article-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #fca5a5;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .article-link:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .threat-level {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .sources-section {
+            margin-top: 60px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 3px solid #ef4444;
+        }
+
+        .sources-section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .sources-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .source-item {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .source-item:hover {
+            background: rgba(239, 68, 68, 0.1);
+            transform: translateY(-3px);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .source-item a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .source-item a:hover {
+            color: #fca5a5;
+        }
+
+        .source-item p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 968px) {
+            .menu-right {
+                position: fixed;
+                left: -100%;
+                top: 80px;
+                width: calc(100% - 40px);
+                background: rgba(15, 15, 25, 0.98);
+                flex-direction: column;
+                padding: 20px;
+                border-radius: 20px;
+                transition: left 0.4s ease;
+                margin-left: 20px;
+            }
+
+            .menu-right.active {
+                left: 0;
+            }
+
+            .burger {
+                display: flex;
+            }
+
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .main-content {
+                padding: 120px 20px 60px;
+            }
+
+            .sources-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <nav>
+        <div class="nav-container">
+            <ul class="menu-left">
+                <li><a href="index.html">TL</a></li>
+            </ul>
+            
+            <ul class="menu-right" id="menuRight">
+                <li><a href="index.html">🏠 Accueil</a></li>
+                <li><a href="veillesujet2.html">🤖 Intelligence Artificielle</a></li>
+                <li><a href="cv.html">📋 CV</a></li>
+                <li><a href="index.html#contact">📧 Contact</a></li>
+            </ul>
+
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>🔒 Cybersécurité</h1>
+            <p>Ma veille technologique sur les menaces et les solutions de sécurité informatique</p>
+        </div>
+
+        <div class="veille-intro">
+            <h2>Pourquoi cette veille ?</h2>
+            <p>
+                La cybersécurité est devenue un enjeu majeur pour toutes les organisations. Avec 
+                l'augmentation constante des cyberattaques et leur sophistication croissante, il est 
+                crucial pour un développeur de comprendre les vulnérabilités courantes et les bonnes 
+                pratiques de sécurité. Cette veille me permet de rester informé des dernières menaces 
+                et des techniques de protection pour développer des applications sécurisées.
+            </p>
+        </div>
+
+        <div class="articles-grid">
+            <div class="article-card">
+                <div class="article-header">
+                    <div>
+                        <div class="article-meta">
+                            <span class="article-date">📅 Janvier 2025</span>
+                            <span class="article-tag">Ransomware</span>
+                        </div>
+                        <h3>Explosion des attaques par ransomware en 2024</h3>
+                    </div>
+                    <div class="article-icon">🦠</div>
+                </div>
+                <p>
+                    Les attaques par ransomware ont augmenté de 40% en 2024, touchant particulièrement 
+                    les PME et les collectivités. Les cybercriminels exploitent des vulnérabilités 
+                    connues mais non corrigées, rappelant l'importance des mises à jour de sécurité 
+                    régulières et des sauvegardes. Les montants de rançons demandés atteignent des 
+                    records.
+                </p>
+                <div class="threat-level">⚠️ Niveau de menace : ÉLEVÉ</div>
+            </div>
+
+            <div class="article-card">
+                <div class="article-header">
+                    <div>
+                        <div class="article-meta">
+                            <span class="article-date">📅 Décembre 2024</span>
+                            <span class="article-tag">Phishing</span>
+                        </div>
+                        <h3>Les nouvelles techniques de phishing par IA</h3>
+                    </div>
+                    <div class="article-icon">🎣</div>
+                </div>
+                <p>
+                    L'intelligence artificielle permet désormais aux cybercriminels de créer des emails 
+                    de phishing extrêmement convaincants, avec un français parfait et des contenus 
+                    personnalisés. Les deepfakes vocaux sont également utilisés pour usurper l'identité 
+                    de dirigeants. La sensibilisation des utilisateurs devient plus critique que jamais.
+                </p>
+                <div class="threat-level">⚠️ Niveau de menace : CRITIQUE</div>
+            </div>
+
+            <div class="article-card">
+                <div class="article-header">
+                    <div>
+                        <div class="article-meta">
+                            <span class="article-date">📅 Novembre 2024</span>
+                            <span class="article-tag">Vulnérabilités</span>
+                        </div>
+                        <h3>Zero-day : découverte d'une faille critique</h3>
+                    </div>
+                    <div class="article-icon">🔓</div>
+                </div>
+                <p>
+                    Une vulnérabilité zero-day affectant plusieurs frameworks web populaires a été 
+                    découverte et activement exploitée. Cette faille permet l'exécution de code à 
+                    distance sans authentification. Les éditeurs ont publié des correctifs d'urgence, 
+                    soulignant l'importance de maintenir ses dépendances à jour.
+                </p>
+                <div class="threat-level">🔴 Niveau de menace : CRITIQUE</div>
+            </div>
+
+            <div class="article-card">
+                <div class="article-header">
+                    <div>
+                        <div class="article-meta">
+                            <span class="article-date">📅 Octobre 2024</span>
+                            <span class="article-tag">Authentification</span>
+                        </div>
+                        <h3>L'authentification multifacteur devient obligatoire</h3>
+                    </div>
+                    <div class="article-icon">🔐</div>
+                </div>
+                <p>
+                    De plus en plus d'organisations imposent l'authentification multifacteur (MFA) 
+                    pour tous leurs services. Cette mesure simple mais efficace réduit drastiquement 
+                    les risques de compromission de comptes. Les passkeys et la biométrie se 
+                    généralisent comme alternatives aux mots de passe traditionnels.
+                </p>
+                <div class="threat-level">✅ Niveau de protection : ÉLEVÉ</div>
+            </div>
+
+            <div class="article-card">
+                <div class="article-header">
+                    <div>
+                        <div class="article-meta">
+                            <span class="article-date">📅 Septembre 2024</span>
+                            <span class="article-tag">Cloud Security</span>
+                        </div>
+                        <h3>Sécuriser ses applications cloud</h3>
+                    </div>
+                    <div class="article-icon">☁️</div>
+                </div>
+                <p>
+                    Avec la migration massive vers le cloud, de nouvelles vulnérabilités apparaissent. 
+                    Mauvaises configurations, accès trop permissifs et gestion inadéquate des secrets 
+                    sont les erreurs les plus courantes. Les bonnes pratiques DevSecOps deviennent 
+                    essentielles pour sécuriser les déploiements cloud.
+                </p>
+                <div class="threat-level">⚠️ Niveau de menace : MOYEN</div>
+            </div>
+        </div>
+
+        <div class="sources-section">
+            <h2>📖 Mes sources de veille</h2>
+            <div class="sources-list">
+                <div class="source-item">
+                    <a href="https://www.cert.ssi.gouv.fr" target="_blank" rel="noopener noreferrer">🇫🇷 CERT-FR</a>
+                    <p>Alertes de sécurité officielles</p>
+                </div>
+                <div class="source-item">
+                    <a href="https://www.cyberveille-sante.gouv.fr" target="_blank" rel="noopener noreferrer">🏥 Cyberveille Santé</a>
+                    <p>Veille cybersécurité</p>
+                </div>
+                <div class="source-item">
+                    <a href="https://www.bleepingcomputer.com" target="_blank" rel="noopener noreferrer">💻 Bleeping Computer</a>
+                    <p>Actualités sécurité IT</p>
+                </div>
+                <div class="source-item">
+                    <a href="https://thehackernews.com" target="_blank" rel="noopener noreferrer">📰 The Hacker News</a>
+                    <p>News cybersécurité</p>
+                </div>
+                <div class="source-item">
+                    <a href="https://www.cisa.gov" target="_blank" rel="noopener noreferrer">🇺🇸 CISA</a>
+                    <p>Alertes et bulletins</p>
+                </div>
+                <div class="source-item">
+                    <a href="https://krebsonsecurity.com" target="_blank" rel="noopener noreferrer">🔍 Krebs on Security</a>
+                    <p>Analyses approfondies</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        $(document).ready(function() {
+            $("#burger").click(function() {
+                $(this).toggleClass("active");
+                $("#menuRight").toggleClass("active");
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            $('.article-card').each(function(index) {
+                $(this).css({
+                    'opacity': '0',
+                    'transform': 'translateY(30px)',
+                    'transition': `all 0.6s ease ${index * 0.1}s`
+                });
+                observer.observe(this);
+            });
+        });
+    </script>
+</body>
+</html>

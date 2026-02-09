@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - Alexandre Marquant</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+        }
+
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1400px;
+            background: rgba(15, 15, 25, 0.7);
+            backdrop-filter: blur(30px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: 12px 30px;
+        }
+
+        nav .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-left a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-right {
+            list-style: none;
+            display: flex;
+            gap: 5px;
+        }
+
+        .menu-right li a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .menu-right li a:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .burger span {
+            width: 28px;
+            height: 2.5px;
+            background: white;
+            margin: 3px 0;
+        }
+
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 140px 40px 80px;
+        }
+
+        .cv-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .cv-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1, #ec4899);
+            border-radius: 32px 32px 0 0;
+        }
+
+        .cv-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 40px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cv-header h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.7));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+            margin-bottom: 10px;
+        }
+
+        .cv-header .title {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .cv-contact {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .cv-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        .cv-contact-item span {
+            font-size: 1.2rem;
+        }
+
+        .cv-section {
+            margin-bottom: 45px;
+        }
+
+        .cv-section h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .cv-section h2::before {
+            content: '';
+            width: 6px;
+            height: 40px;
+            background: linear-gradient(180deg, #6366f1, #ec4899);
+            border-radius: 10px;
+        }
+
+        .cv-item {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            padding: 28px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cv-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #6366f1, #ec4899);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .cv-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateX(8px);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .cv-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .cv-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .cv-item-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .cv-item-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+
+        .cv-item-date {
+            background: rgba(99, 102, 241, 0.2);
+            color: #c7d2fe;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .cv-item-description {
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.7;
+            margin-top: 12px;
+        }
+
+        .cv-item-description ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .cv-item-description li {
+            margin: 8px 0;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .skill-item {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .skill-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-5px);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .skill-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .skill-name {
+            font-weight: 600;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(236, 72, 153, 0.3));
+            color: white;
+            padding: 18px 36px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.4s ease;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            margin-top: 30px;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(236, 72, 153, 0.5));
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        .cv-footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 40px;
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 968px) {
+            .menu-right {
+                position: fixed;
+                left: -100%;
+                top: 80px;
+                width: calc(100% - 40px);
+                background: rgba(15, 15, 25, 0.98);
+                flex-direction: column;
+                padding: 20px;
+                border-radius: 20px;
+                transition: left 0.4s ease;
+                margin-left: 20px;
+            }
+
+            .menu-right.active {
+                left: 0;
+            }
+
+            .burger {
+                display: flex;
+            }
+
+            .cv-container {
+                padding: 40px 25px;
+            }
+
+            .cv-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .cv-contact {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .cv-item-header {
+                flex-direction: column;
+            }
+
+            .skills-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <nav>
+        <div class="nav-container">
+            <ul class="menu-left">
+                <li><a href="index.html">AM</a></li>
+            </ul>
+            
+            <ul class="menu-right" id="menuRight">
+                <li><a href="index.html">🏠 Accueil</a></li>
+                <li><a href="tp.html">💻 TPs</a></li>
+                <li><a href="projets.html">🚀 Projets</a></li>
+                <li><a href="index.html#contact">📧 Contact</a></li>
+            </ul>
+
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="cv-container">
+            <!-- En-tête -->
+            <div class="cv-header">
+                <h1>Alexandre Marquant</h1>
+                <div class="title">Étudiant BTS SIO - Option SISR</div>
+                <div class="cv-contact">
+                    <div class="cv-contact-item">
+                        <span>📧</span>
+                        <span>alexandre.marquant@saint-remi.net</span>
+                    </div>
+                    <div class="cv-contact-item">
+                        <span>📱</span>
+                        <span>06 30 84 68 70</span>
+                    </div>
+                    <div class="cv-contact-item">
+                        <span>📍</span>
+                        <span>Amiens, France</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profil -->
+            <div class="cv-section">
+                <h2>👤 Profil</h2>
+                <div class="cv-item">
+                    <p class="cv-item-description">
+                        Étudiant en BTS SIO option SISR, je me forme à l'administration des systèmes et réseaux, à la sécurisation des infrastructures et au support technique.
+                        Motivé, rigoureux et passionné par les technologies, je cherche un stage/une alternance afin de mettre en pratique mes compétences en gestion de parc, déploiement de services et résolution d'incidents.
+                        Mon objectif : évoluer vers un poste de technicien systèmes et réseaux.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Formation -->
+            <div class="cv-section">
+                <h2>🎓 Formation</h2>
+                
+                <div class="cv-item">
+                    <div class="cv-item-header">
+                        <div>
+                            <div class="cv-item-title">BTS SIO option SISR</div>
+                            <div class="cv-item-subtitle">Saint-Remi, Amiens</div>
+                        </div>
+                        <div class="cv-item-date">2025-2027</div>
+                    </div>
+                    <p class="cv-item-description">
+                        Actuellement en BTS Services Informatiques aux Organisations – option SISR, je me spécialise dans l'administration des systèmes et réseaux.
+                        Ma formation couvre principalement la gestion d'infrastructures, la configuration d'équipements réseau, la virtualisation, la cybersécurité, ainsi que le support et la maintenance informatique.
+                    </p>
+                </div>
+
+                <div class="cv-item">
+                    <div class="cv-item-header">
+                        <div>
+                            <div class="cv-item-title">Bac Pro MELEC mention très bien</div>
+                            <div class="cv-item-subtitle">Paul-Langevin, Beauvais</div>
+                        </div>
+                        <div class="cv-item-date">2022-2025</div>
+                    </div>
+                    <p class="cv-item-description">
+                        Métiers de l'Électricité et de ses Environnements Connectés
+                    </p>
+                </div>
+            </div>
+
+            <!-- Expériences -->
+            <div class="cv-section">
+                <h2>💼 Expériences Professionnelles</h2>
+                
+                <div class="cv-item">
+                    <div class="cv-item-header">
+                        <div>
+                            <div class="cv-item-title">💻 Tech2V</div>
+                            <div class="cv-item-subtitle">Entreprise de service informatique</div>
+                        </div>
+                        <div class="cv-item-date">6 semaines</div>
+                    </div>
+                    <div class="cv-item-description">
+                        <ul>
+                            <li>Gestion de machine virtuelle et OS</li>
+                            <li>Configuration de Pare-Feu</li>
+                            <li>Contacts avec les PDG de leurs clients</li>
+                            <li>Démontage et réparation de PC</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="cv-item">
+                    <div class="cv-item-header">
+                        <div>
+                            <div class="cv-item-title">🔌 CCDE</div>
+                            <div class="cv-item-subtitle">Entreprise d'électronique</div>
+                        </div>
+                        <div class="cv-item-date">6 semaines</div>
+                    </div>
+                    <div class="cv-item-description">
+                        <ul>
+                            <li>Montage de platine électrique</li>
+                            <li>Lecture de schémas</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="cv-item">
+                    <div class="cv-item-header">
+                        <div>
+                            <div class="cv-item-title">🏭 Novafloor</div>
+                            <div class="cv-item-subtitle">Usine</div>
+                        </div>
+                        <div class="cv-item-date">3 semaines</div>
+                    </div>
+                    <div class="cv-item-description">
+                        <ul>
+                            <li>Fabrication de plaques pour salle de bain</li>
+                            <li>Préparation des ingrédients chimiques</li>
+                            <li>Dépannage d'un tableau électrique</li>
+                            <li>Préparation des commandes</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="cv-item">
+                    <div class="cv-item-header">
+                        <div>
+                            <div class="cv-item-title">🌿 Jardinage</div>
+                            <div class="cv-item-subtitle">Chez particuliers</div>
+                        </div>
+                        <div class="cv-item-date">2020–2025</div>
+                    </div>
+                    <div class="cv-item-description">
+                        <ul>
+                            <li>Utilisation de tracteur tondeuse</li>
+                            <li>Utilisation de taille-haies</li>
+                            <li>Désherbage et coupe de roses</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compétences -->
+            <div class="cv-section">
+                <h2>🛠️ Compétences Techniques</h2>
+                <div class="skills-grid">
+                    <div class="skill-item">
+                        <div class="skill-icon">💻</div>
+                        <div class="skill-name">Maintenance Informatique</div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">🛡️</div>
+                        <div class="skill-name">Réseau & Sécurité</div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">🔧</div>
+                        <div class="skill-name">Électronique</div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">⚙️</div>
+                        <div class="skill-name">Fabrication Industrielle</div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">🌿</div>
+                        <div class="skill-name">Jardinage & Entretien</div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">🤝</div>
+                        <div class="skill-name">Travail d'équipe</div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">🎯</div>
+                        <div class="skill-name">Autonomie</div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-icon">🔄</div>
+                        <div class="skill-name">Adaptabilité</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Langues -->
+            <div class="cv-section">
+                <h2>🌍 Langues</h2>
+                <div class="cv-item">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="font-weight: 600; color: white;">Français</span>
+                        <span style="color: rgba(255, 255, 255, 0.7);">Langue maternelle</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="font-weight: 600; color: white;">Anglais</span>
+                        <span style="color: rgba(255, 255, 255, 0.7);">Niveau B2</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="font-weight: 600; color: white;">Russe</span>
+                        <span style="color: rgba(255, 255, 255, 0.7);">Niveau B2</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="cv-footer">
+                <a href="Richard.pdf" class="download-btn" download>
+                    <span>📥</span>
+                    <span>Télécharger le CV (PDF)</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        $(document).ready(function() {
+            $("#burger").click(function() {
+                $(this).toggleClass("active");
+                $("#menuRight").toggleClass("active");
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            $('.cv-item, .skill-item').each(function(index) {
+                $(this).css({
+                    'opacity': '0',
+                    'transform': 'translateY(20px)',
+                    'transition': `all 0.5s ease ${index * 0.05}s`
+                });
+                observer.observe(this);
+            });
+        });
+    </script>
+</body>
+</html>

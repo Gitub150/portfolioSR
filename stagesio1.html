@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage SIO2 - Alexandre Marquant</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+        }
+
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1400px;
+            background: rgba(15, 15, 25, 0.7);
+            backdrop-filter: blur(30px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: 12px 30px;
+        }
+
+        nav .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-left a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-right {
+            list-style: none;
+            display: flex;
+            gap: 5px;
+        }
+
+        .menu-right li a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .menu-right li a:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .burger span {
+            width: 28px;
+            height: 2.5px;
+            background: white;
+            margin: 3px 0;
+        }
+
+        .main-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 140px 40px 80px;
+        }
+
+        .stage-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .stage-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 32px 32px 0 0;
+        }
+
+        .stage-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .stage-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.7));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+            margin-bottom: 15px;
+        }
+
+        .stage-header .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+
+        .stage-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-3px);
+        }
+
+        .info-card h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .info-card p {
+            font-size: 1.2rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .stage-section {
+            margin-bottom: 40px;
+        }
+
+        .stage-section h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stage-section h2::before {
+            content: '';
+            width: 5px;
+            height: 35px;
+            background: linear-gradient(180deg, #6366f1, #8b5cf6);
+            border-radius: 10px;
+        }
+
+        .stage-section p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            font-size: 1.05rem;
+            margin-bottom: 15px;
+        }
+
+        .missions-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .missions-list li {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            border-left: 3px solid #6366f1;
+            transition: all 0.3s ease;
+        }
+
+        .missions-list li:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateX(5px);
+        }
+
+        .missions-list li strong {
+            color: white;
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .competences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .competence-item {
+            background: rgba(99, 102, 241, 0.15);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            color: #c7d2fe;
+            font-weight: 600;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .download-section {
+            margin-top: 50px;
+            padding-top: 40px;
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.3));
+            color: white;
+            padding: 18px 36px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.4s ease;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            margin: 0 10px;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(139, 92, 246, 0.5));
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        @media (max-width: 968px) {
+            .menu-right {
+                position: fixed;
+                left: -100%;
+                top: 80px;
+                width: calc(100% - 40px);
+                background: rgba(15, 15, 25, 0.98);
+                flex-direction: column;
+                padding: 20px;
+                border-radius: 20px;
+                transition: left 0.4s ease;
+                margin-left: 20px;
+            }
+
+            .menu-right.active {
+                left: 0;
+            }
+
+            .burger {
+                display: flex;
+            }
+
+            .stage-container {
+                padding: 40px 25px;
+            }
+
+            .stage-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .stage-info {
+                grid-template-columns: 1fr;
+            }
+
+            .competences-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .download-btn {
+                margin: 10px 0;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <nav>
+        <div class="nav-container">
+            <ul class="menu-left">
+                <li><a href="index.html">TL</a></li>
+            </ul>
+            
+            <ul class="menu-right" id="menuRight">
+                <li><a href="index.html">🏠 Accueil</a></li>
+                <li><a href="stagesio1.html">📍 Stage SIO1</a></li>
+                <li><a href="projets.html">🚀 Projets</a></li>
+                <li><a href="index.html#contact">📧 Contact</a></li>
+            </ul>
+
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="stage-container">
+            <div class="stage-header">
+                <h1>🚀 Stage SIO 2ème année</h1>
+                <div class="subtitle">Rapport de stage - Projet de développement avancé</div>
+            </div>
+
+            <div class="stage-info">
+                <div class="info-card">
+                    <h3>📅 Période</h3>
+                    <p>Mai - Juillet 2027</p>
+                </div>
+                <div class="info-card">
+                    <h3>⏱️ Durée</h3>
+                    <p>10 semaines</p>
+                </div>
+                <div class="info-card">
+                    <h3>🏢 Entreprise</h3>
+                    <p>[Nom de l'entreprise]</p>
+                </div>
+                <div class="info-card">
+                    <h3>📍 Lieu</h3>
+                    <p>[Ville]</p>
+                </div>
+            </div>
+
+            <div class="stage-section">
+                <h2>📋 Contexte du stage</h2>
+                <p>
+                    Dans le cadre de ma deuxième année de BTS SIO option SLAM, j'ai effectué un stage 
+                    de 10 semaines au sein de [Nom de l'entreprise]. Ce stage avait pour objectif de 
+                    me permettre de participer à un projet de développement d'envergure et de mettre en 
+                    œuvre l'ensemble des compétences acquises durant ma formation.
+                </p>
+                <p>
+                    L'entreprise souhaitait moderniser son système d'information et développer une 
+                    nouvelle application web pour améliorer la gestion de [domaine]. J'ai été intégré 
+                    à l'équipe de développement pour participer à ce projet stratégique.
+                </p>
+            </div>
+
+            <div class="stage-section">
+                <h2>🎯 Projet principal</h2>
+                <p>
+                    <strong>Titre du projet :</strong> Développement d'une application web de gestion [type]
+                </p>
+                <p>
+                    <strong>Objectif :</strong> Créer une application moderne et scalable permettant de 
+                    [objectif principal], tout en respectant les normes de sécurité et d'accessibilité.
+                </p>
+                <p>
+                    <strong>Technologies utilisées :</strong> React, Node.js, PostgreSQL, Docker, Git
+                </p>
+            </div>
+
+            <div class="stage-section">
+                <h2>🔧 Missions techniques réalisées</h2>
+                <ul class="missions-list">
+                    <li>
+                        <strong>Architecture et conception</strong>
+                        Participation à la conception de l'architecture de l'application. Réalisation 
+                        des diagrammes UML (cas d'utilisation, classes, séquences) et des maquettes 
+                        d'interface utilisateur.
+                    </li>
+                    <li>
+                        <strong>Développement Front-End</strong>
+                        Développement de l'interface utilisateur avec React. Création de composants 
+                        réutilisables, gestion d'état avec Redux, et intégration d'API REST.
+                    </li>
+                    <li>
+                        <strong>Développement Back-End</strong>
+                        Création d'API RESTful avec Node.js et Express. Gestion de l'authentification 
+                        JWT, mise en place de middlewares de sécurité, et optimisation des requêtes.
+                    </li>
+                    <li>
+                        <strong>Base de données</strong>
+                        Conception et implémentation du schéma de base de données PostgreSQL. Création 
+                        de procédures stockées et optimisation des performances.
+                    </li>
+                    <li>
+                        <strong>Tests et qualité</strong>
+                        Rédaction de tests unitaires et d'intégration. Mise en place de l'intégration 
+                        continue avec GitLab CI/CD.
+                    </li>
+                    <li>
+                        <strong>Déploiement</strong>
+                        Containerisation de l'application avec Docker. Configuration du déploiement 
+                        sur un serveur de production.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="stage-section">
+                <h2>💡 Compétences acquises et approfondies</h2>
+                <div class="competences-grid">
+                    <div class="competence-item">React & Redux</div>
+                    <div class="competence-item">Node.js & Express</div>
+                    <div class="competence-item">PostgreSQL</div>
+                    <div class="competence-item">Docker</div>
+                    <div class="competence-item">CI/CD</div>
+                    <div class="competence-item">API REST</div>
+                    <div class="competence-item">Tests Automatisés</div>
+                    <div class="competence-item">Sécurité Web</div>
+                    <div class="competence-item">UML</div>
+                    <div class="competence-item">Méthodes Agiles</div>
+                    <div class="competence-item">Code Review</div>
+                    <div class="competence-item">Documentation</div>
+                </div>
+            </div>
+
+            <div class="stage-section">
+                <h2>📊 Résultats et bilan</h2>
+                <p>
+                    Ce stage de fin d'études m'a permis de participer à un projet complet, de la 
+                    conception au déploiement. L'application développée est désormais en production 
+                    et utilisée quotidiennement par [nombre] utilisateurs.
+                </p>
+                <p>
+                    Cette expérience m'a confirmé mon intérêt pour le développement full-stack et m'a 
+                    apporté une vision globale du cycle de vie d'un projet informatique. Les compétences 
+                    techniques et méthodologiques acquises constituent une base solide pour débuter ma 
+                    carrière professionnelle.
+                </p>
+                <p>
+                    Je remercie l'ensemble de l'équipe pour son accompagnement et sa confiance tout au 
+                    long de ce stage enrichissant.
+                </p>
+            </div>
+
+            <div class="download-section">
+                <a href="#" class="download-btn">
+                    <span>📥</span>
+                    <span>Télécharger le rapport complet</span>
+                </a>
+                <a href="#" class="download-btn">
+                    <span>📄</span>
+                    <span>Convention de stage</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        $(document).ready(function() {
+            $("#burger").click(function() {
+                $(this).toggleClass("active");
+                $("#menuRight").toggleClass("active");
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            $('.stage-section, .info-card').each(function(index) {
+                $(this).css({
+                    'opacity': '0',
+                    'transform': 'translateY(20px)',
+                    'transition': `all 0.6s ease ${index * 0.1}s`
+                });
+                observer.observe(this);
+            });
+        });
+    </script>
+</body>
+</html>

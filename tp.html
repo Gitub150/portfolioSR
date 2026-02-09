@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPs - Alexandre Marquant</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0f;
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+        }
+
+        /* Animation de fond */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none; /* Important : laisse passer les clics */
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1400px;
+            background: rgba(15, 15, 25, 0.7);
+            backdrop-filter: blur(30px) saturate(180%);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: 12px 30px;
+        }
+
+        nav .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-left a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-right {
+            list-style: none;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .menu-right > li > a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-right > li > a:hover {
+            color: white;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .burger span {
+            width: 28px;
+            height: 2.5px;
+            background: white;
+            margin: 3px 0;
+            border-radius: 2px;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 140px 40px 80px;
+            position: relative;
+            z-index: 1; /* Force le contenu au-dessus du fond */
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .page-header h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .tp-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .tp-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #ec4899);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .tp-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .tp-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .tp-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .tp-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .tp-card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .tp-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .tp-tag {
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .tp-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .tp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.2));
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .tp-btn:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(236, 72, 153, 0.3));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: rgba(15, 15, 25, 0.95);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.8);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.7));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 10px;
+        }
+
+        /* Styles pour le contenu du TP dans la modale */
+        .modal-body h3 {
+            color: #a5b4fc;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-bottom: 1px solid rgba(165, 180, 252, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .modal-body h4 {
+            color: #ec4899;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .modal-body p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        .modal-body ul, .modal-body ol {
+            color: rgba(255, 255, 255, 0.8);
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .modal-body code {
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .modal-body pre {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        
+        .modal-body pre code {
+            background: transparent;
+            color: #e2e8f0;
+            padding: 0;
+            font-size: 0.9rem;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .modal-btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .menu-right {
+                position: fixed;
+                left: -100%;
+                top: 80px;
+                width: calc(100% - 40px);
+                background: rgba(15, 15, 25, 0.98);
+                flex-direction: column;
+                padding: 20px;
+                border-radius: 20px;
+                transition: left 0.4s ease;
+                margin-left: 20px;
+            }
+
+            .menu-right.active {
+                left: 0;
+            }
+
+            .burger {
+                display: flex;
+            }
+
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .tp-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 120px 20px 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="grid-overlay"></div>
+
+    <nav id="navbar">
+        <div class="nav-container">
+            <ul class="menu-left">
+                <li><a href="index.html">TL</a></li>
+            </ul>
+            
+            <ul class="menu-right" id="menuRight">
+                <li><a href="index.html">🏠 Accueil</a></li>
+                <li><a href="projets.html">🚀 Projets</a></li>
+                <li><a href="cv.html">📋 CV</a></li>
+                <li><a href="index.html#contact">📧 Contact</a></li>
+            </ul>
+
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>💻 Mes TPs</h1>
+            <p>Ensemble des travaux pratiques réalisés durant ma formation BTS SIO</p>
+        </div>
+
+        <div class="tp-grid">
+            <div class="tp-card" data-tp="tp-diagnostic-reseau">
+                <div class="tp-icon">🔍</div>
+                <h3>TP 5.2 - Diagnostic d'un problème de connexion réseau</h3>
+                <p>Diagnostic méthodique d'une panne réseau : ipconfig, ping, tracert, netstat, nslookup et procédures de réparation complètes.</p>
+                <div class="tp-meta">
+                    <span class="tp-tag">Réseau</span>
+                    <span class="tp-tag">Diagnostic</span>
+                    <span class="tp-tag">CMD</span>
+                </div>
+                <div class="tp-actions">
+                    <button class="tp-btn tp-preview">👁️ Prévisualiser</button>
+                    <button class="tp-btn tp-download">📥 Télécharger PDF</button>
+                </div>
+            </div>
+
+            <div class="tp-card" data-tp="tp-cmd-essentielles">
+                <div class="tp-icon">⌨️</div>
+                <h3>TP 6.1 - Commandes CMD Essentielles</h3>
+                <p>Commandes essentielles du support informatique : diagnostic système, dépannage réseau, gestion des utilisateurs et processus.</p>
+                <div class="tp-meta">
+                    <span class="tp-tag">CMD</span>
+                    <span class="tp-tag">Support</span>
+                    <span class="tp-tag">Administration</span>
+                </div>
+                <div class="tp-actions">
+                    <button class="tp-btn tp-preview">👁️ Prévisualiser</button>
+                    <button class="tp-btn tp-download">📥 Télécharger PDF</button>
+                </div>
+            </div>
+
+            <div class="tp-card" data-tp="tp-sql">
+                <div class="tp-icon">💾</div>
+                <h3>TP SQL - SELECT / INSERT / UPDATE / DELETE</h3>
+                <p>Manipulation complète de bases de données : requêtes SELECT, INSERT, UPDATE, DELETE avec SQLite. Cas pratique d'une boutique en ligne.</p>
+                <div class="tp-meta">
+                    <span class="tp-tag">SQL</span>
+                    <span class="tp-tag">SQLite</span>
+                    <span class="tp-tag">Base de données</span>
+                </div>
+                <div class="tp-actions">
+                    <button class="tp-btn tp-preview">👁️ Prévisualiser</button>
+                    <button class="tp-btn tp-download">📥 Télécharger PDF</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Aperçu du TP</h2>
+                <div class="modal-close" id="modalClose">×</div>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" id="modalCloseBtn">Fermer</button>
+                <button class="modal-btn modal-btn-primary" id="modalDownloadBtn">📥 Télécharger PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // DONNÉES DU CONTENU DES TPS
+            const tpContent = {
+                'tp-diagnostic-reseau': {
+                    title: 'TP 5.2 - Diagnostic et Réparation d\'un Problème de Connexion Réseau',
+                    fileName: 'TP_5.2_A_–_Diagnostic_d’un_problème_de_connexion_réseau.pdf',
+                    content: `
+                        <h3>Mission</h3>
+                        <p>Vous êtes technicien au lycée Saint Rémi. Un enseignant signale : "n'a plus Internet du tout, ni sur le Wi-Fi, ni sur le câble".<br>
+                        <strong>Votre mission :</strong> diagnostiquer méthodiquement la panne avec le terminal.</p>
+
+                        <h3>Partie 1 – Vérification de la configuration locale (ipconfig)</h3>
+                        <h4>Commande principale</h4>
+                        <pre>ipconfig /all</pre>
+                        
+                        <h4>Relevé des informations</h4>
+                        <ul>
+                            <li><strong>IPv4 :</strong> <code>192.168.28.62</code></li>
+                            <li><strong>Masque :</strong> <code>255.255.255.0</code></li>
+                            <li><strong>Passerelle :</strong> <code>192.168.28.253</code></li>
+                            <li><strong>DNS :</strong> <code>193.49.251.6</code>, <code>54.38.53.123</code>, <code>8.8.8.8</code></li>
+                            <li><strong>Interface :</strong> Carte Ethernet Eth 1 - Realtek (DHCP activé)</li>
+                        </ul>
+
+                        <h4>Diagnostic</h4>
+                        <p><strong>Ce qui serait anormal :</strong></p>
+                        <ul>
+                            <li>Adresse en 169.254.x.x (APIPA)</li>
+                            <li>Passerelle non configurée</li>
+                            <li>Aucun DNS</li>
+                        </ul>
+                        <p><strong>Action si IP non obtenue :</strong></p>
+                        <pre>ipconfig /release
+ipconfig /renew</pre>
+
+                        <h3>Partie 2 – Pings de diagnostic</h3>
+                        <h4>Commandes</h4>
+                        <pre>ping 127.0.0.1
+ping 192.168.28.253
+ping 8.8.8.8
+ping google.com</pre>
+
+                        <h4>Interprétation</h4>
+                        <ul>
+                            <li><strong>Ping 127.0.0.1 OK mais Passerelle KO :</strong> Le problème est entre le PC et le routeur.</li>
+                            <li><strong>Ping Passerelle OK mais 8.8.8.8 KO :</strong> Le routeur ne transmet pas vers Internet ou le trafic est bloqué.</li>
+                            <li><strong>Délais élevés (250ms+) :</strong> Surcharge routeur, mauvaise liaison WiFi ou congestion FAI.</li>
+                            <li><strong>Perte de paquets :</strong> Câble endommagé, mauvaise réception WiFi ou saturation sévère.</li>
+                            <li><strong>Ping IP externe OK mais Ping DNS KO :</strong> La connexion fonctionne, c'est le service de résolution DNS qui est défectueux.</li>
+                        </ul>
+
+                        <h3>Partie 3 – Analyse du chemin réseau (tracert)</h3>
+                        <h4>Commande</h4>
+                        <pre>tracert google.com</pre>
+
+                        <h4>Analyse</h4>
+                        <ul>
+                            <li><strong>Nombre de sauts :</strong> 12</li>
+                            <li><strong>Signification '*' :</strong> Le routeur ne renvoie pas de message ICMP (souvent par sécurité).</li>
+                            <li><strong>Localisation du blocage :</strong>
+                                <ul>
+                                    <li>Réseau local : Saut 1 échoue.</li>
+                                    <li>FAI : Sauts 2 à 5 affichent *** et arrêt.</li>
+                                    <li>Google : Derniers sauts en échec.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Congestion :</strong> Repérable par une augmentation drastique du temps (ex: passage de 15ms à 250ms).</li>
+                        </ul>
+
+                        <h3>Partie 4 – Surveillance locale (netstat)</h3>
+                        <h4>Commande</h4>
+                        <pre>netstat -ano</pre>
+                        <p>Permet de repérer un processus monopolisant la bande passante ou une connexion suspecte (port inhabituel, IP étrangère). On associe le PID au gestionnaire des tâches.</p>
+
+                        <h3>Partie 5 – Test de résolution DNS (nslookup)</h3>
+                        <h4>Commandes</h4>
+                        <pre>nslookup google.com
+nslookup microsoft.com 8.8.8.8</pre>
+
+                        <h4>Objectifs</h4>
+                        <ul>
+                            <li>Vérifier l'adresse IP retournée.</li>
+                            <li>Isoler un problème de DNS interne en testant un serveur externe (8.8.8.8).</li>
+                            <li>Diagnostiquer un filtrage pare-feu si le ping échoue mais nslookup réussit.</li>
+                        </ul>
+
+                        <h3>Partie 6 – Procédures de réparation</h3>
+                        
+                        <h4>1. Réinitialisation IP</h4>
+                        <pre>ipconfig /release
+ipconfig /renew</pre>
+
+                        <h4>2. Purge DNS</h4>
+                        <pre>ipconfig /flushdns</pre>
+
+                        <h4>3. Réinitialisation interface</h4>
+                        <pre>netsh interface set interface "Ethernet" enable</pre>
+
+                        <h4>4. Reset TCP/IP (Problèmes "fantômes")</h4>
+                        <pre>netsh int ip reset
+netsh winsock reset</pre>
+                    `
+                },
+                'tp-cmd-essentielles': {
+                    title: 'TP 6.1 - Commandes CMD Essentielles du Support Informatique',
+                    fileName: 'TP_6.1_Commandes_CMD_Essentielles_Support.pdf',
+                    content: `
+                        <h3>Objectif</h3>
+                        <p>Familiariser les étudiants avec les commandes essentielles de l'invite de commandes Windows (CMD) pour le diagnostic système, le dépannage réseau et la gestion des utilisateurs.</p>
+
+                        <h3>1. Information et Diagnostic du Système</h3>
+                        <p>Commandes pour collecter des infos matérielles et logicielles.</p>
+                        <ul>
+                            <li><code>systeminfo</code> : Affiche l'OS, mises à jour, configuration matérielle (ex: HP ProDesk 400 G4 SFF, BIOS Ver 02.49).</li>
+                            <li><code>hostname</code> : Affiche le nom du poste (ex: PCV4).</li>
+                            <li><code>tasklist</code> : Liste les processus (PID, Utilisation mémoire).</li>
+                        </ul>
+
+                        <h3>2. Dépannage Réseau</h3>
+                        <ul>
+                            <li><code>ping [cible]</code> : Teste la connectivité. Options : <code>-t</code> (infini), <code>-a</code> (résolution nom).</li>
+                            <li><code>tracert</code> : Affiche la route et les sauts vers une destination.</li>
+                            <li><code>ipconfig /all</code> : Configuration complète (MAC, IP, DNS).</li>
+                            <li><code>netstat -ano</code> : Connexions actives, ports et PIDs.</li>
+                            <li><code>arp -a</code> : Cache ARP (IP <-> MAC).</li>
+                        </ul>
+
+                        <h3>3. Gestion des Utilisateurs</h3>
+                        <ul>
+                            <li><code>net user</code> : Liste, ajoute ou supprime des utilisateurs.</li>
+                            <li><code>net localgroup administrators</code> : Gestion du groupe administrateur.</li>
+                            <li><code>whoami</code> : Affiche l'utilisateur connecté et le domaine.</li>
+                        </ul>
+
+                        <h3>4. Réparation Système</h3>
+                        <ul>
+                            <li><code>chkdsk /f</code> : Analyse et répare le disque.</li>
+                            <li><code>sfc /scannow</code> : Vérifie et répare les fichiers système.</li>
+                            <li><code>taskkill /pid [ID]</code> : Tue un processus bloqué.</li>
+                        </ul>
+
+                        <h3>Exercices Pratiques - Solutions</h3>
+                        
+                        <h4>Ex 1 : Lenteur système</h4>
+                        <p>Pour identifier une surcharge CPU ou un programme bloqué :<br>
+                        <strong>Commande :</strong> <code>tasklist</code></p>
+
+                        <h4>Ex 2 : Problème d'authentification</h4>
+                        <p>Confirmer le compte réel et le domaine :<br>
+                        <strong>Commande :</strong> <code>whoami</code></p>
+
+                        <h4>Ex 3 : Port suspect</h4>
+                        <p>Voir les connexions actives, ports et processus liés :<br>
+                        <strong>Commande :</strong> <code>netstat -ano</code></p>
+
+                        <h4>Ex 5 : Suppression compte</h4>
+                        <p>Supprimer le compte local 'ancienemploye' :<br>
+                        <strong>Commande :</strong> <code>net user ancienemploye /delete</code></p>
+
+                        <h4>Ex 6 : Inventaire</h4>
+                        <p>Afficher le nom de la machine :<br>
+                        <strong>Commande :</strong> <code>hostname</code></p>
+
+                        <h4>Ex 7 : Config réseau complète</h4>
+                        <p>Vérifier DNS, Passerelle, IP :<br>
+                        <strong>Commande :</strong> <code>ipconfig /all</code></p>
+
+                        <h4>Ex 8 : Latence serveur</h4>
+                        <p>Voir les routeurs intermédiaires :<br>
+                        <strong>Commande :</strong> <code>tracert srv-pedago</code></p>
+
+                        <h4>Ex 9 : Fichiers corrompus</h4>
+                        <p>Réparation automatique système :<br>
+                        <strong>Commande :</strong> <code>sfc /scannow</code></p>
+
+                        <h4>Ex 10 : Erreurs disque</h4>
+                        <p>Réparer le volume C: :<br>
+                        <strong>Commande :</strong> <code>chkdsk C: /f</code></p>
+                    `
+                },
+                'tp-sql': {
+                    title: 'TP SQL - SELECT / INSERT / UPDATE / DELETE',
+                    fileName: 'TP_SQL_Select_Insert_Update_Delete.pdf',
+                    content: `
+                        <h3>Contexte : Tech&Go</h3>
+                        <p>Vous travaillez pour Tech&Go, une boutique informatique. Vous devez écrire les requêtes SQL pour répondre aux demandes du responsable.</p>
+
+                        <h3>Création de la Base de Données</h3>
+                        <pre>CREATE TABLE Clients (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nom TEXT NOT NULL,
+    prenom TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE Produits (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nom TEXT NOT NULL,
+    prix REAL NOT NULL
+);
+
+CREATE TABLE Commandes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_client INTEGER NOT NULL,
+    id_produit INTEGER NOT NULL,
+    quantite INTEGER NOT NULL,
+    date_commande TEXT NOT NULL,
+    FOREIGN KEY(id_client) REFERENCES Clients(id),
+    FOREIGN KEY(id_produit) REFERENCES Produits(id)
+);</pre>
+
+                        <h3>Données de test (INSERT)</h3>
+                        <pre>INSERT INTO Clients (nom, prenom, email) VALUES 
+('Dupont', 'Jean', 'jean.dupont@example.com'),
+('Martin', 'Sophie', 'sophie.martin@example.com'),
+('Bernard', 'Lucas', 'lucas.bernard@example.com'),
+('Petit', 'Emma', 'emma.petit@example.com'),
+('Durand', 'Nina', 'nina.durand@example.com');
+
+INSERT INTO Produits (nom, prix) VALUES 
+('Clavier mécanique', 79.90),
+('Souris gamer', 49.90),
+('Écran 24 pouces', 159.00),
+('Casque audio', 89.00),
+('Tapis de souris XXL', 19.90);
+
+INSERT INTO Commandes (id_client, id_produit, quantite, date_commande) VALUES 
+(1, 1, 1, '2025-01-10'),
+(2, 3, 2, '2025-01-10'),
+(4, 5, 1, '2025-01-11');</pre>
+
+                        <h3>Requêtes de Consultation (SELECT)</h3>
+                        
+                        <h4>5. Liste complète des clients</h4>
+                        <pre>SELECT * FROM Clients;</pre>
+
+                        <h4>6. Emails uniquement</h4>
+                        <pre>SELECT email FROM Clients;</pre>
+
+                        <h4>7. Produits triés par prix croissant</h4>
+                        <pre>SELECT * FROM Produits ORDER BY prix;</pre>
+
+                        <h4>8. Produits > 100€</h4>
+                        <pre>SELECT * FROM Produits WHERE prix >= 100;</pre>
+
+                        <h4>9. Commandes du client id=3</h4>
+                        <pre>SELECT * FROM Commandes, Clients WHERE Clients.id = 3;</pre>
+
+                        <h4>10. Commandes enrichies (Jointure)</h4>
+                        <pre>SELECT * FROM Commandes, Clients, Produits
+WHERE Commandes.id_client = Clients.id
+AND Commandes.id_produit = Produits.id;</pre>
+
+                        <h4>11. Produits jamais commandés</h4>
+                        <pre>SELECT * FROM Produits 
+WHERE id NOT IN (SELECT id_produit FROM Commandes);</pre>
+
+                        <h4>12. Produits "entrée de gamme" (< 30€)</h4>
+                        <pre>SELECT * FROM Produits WHERE prix <= 30;</pre>
+
+                        <h4>13. Clients commençant par "D"</h4>
+                        <pre>SELECT * FROM Clients WHERE nom LIKE "D%";</pre>
+
+                        <h4>14. Commandes du 10 janvier 2025</h4>
+                        <pre>SELECT * FROM Commandes WHERE date_commande = "2025-01-10";</pre>
+
+                        <h3>Mises à jour et Insertions</h3>
+
+                        <h4>15. Nouveau client (Jade Leroy)</h4>
+                        <pre>INSERT INTO Clients(nom, prenom, email)
+VALUES ('Leroy', 'Jade', 'jade.leroy@example.com');</pre>
+
+                        <h4>16. Nouveau produit (Webcam HD)</h4>
+                        <pre>INSERT INTO Produits (nom, prix) VALUES ('Webcam HD', 59);</pre>
+
+                        <h4>17. Nouvelle commande pour Leroy Jade</h4>
+                        <pre>INSERT INTO Commandes(id_client, id_produit, quantite,date_commande)
+VALUES (6,2,1, '04/12/2025');</pre>
+
+                        <h4>18. Produits haut de gamme</h4>
+                        <pre>INSERT INTO Produits (nom, prix) VALUES ('Laptop', 599);
+INSERT INTO Produits (nom, prix) VALUES ('PC Gamer', 999);</pre>
+
+                        <h4>19. Modification email client id=1</h4>
+                        <pre>UPDATE Clients SET email='new.dupont@example.com' WHERE id=1;</pre>
+
+                        <h4>20. Baisse prix Casque audio (-10€)</h4>
+                        <pre>UPDATE Produits SET prix=prix-10 WHERE nom='Casque audio';</pre>
+
+                        <h4>21. Augmentation globale +5%</h4>
+                        <pre>UPDATE Produits SET prix=prix*1.05;</pre>
+
+                        <h4>22. Renommage produit</h4>
+                        <pre>UPDATE Produits SET nom='Tapis XXL Gaming' WHERE nom='Tapis de souris XXL';</pre>
+
+                        <h4>23. Correction commande (Quantité)</h4>
+                        <pre>UPDATE Commandes SET quantite=2 WHERE id_client=4;</pre>
+
+                        <h3>Suppressions (DELETE)</h3>
+
+                        <h4>24. Suppression client (RGPD)</h4>
+                        <pre>DELETE FROM Commandes WHERE id_client = 5;
+DELETE FROM Clients WHERE id = 5;</pre>
+
+                        <h4>25. Retrait produit catalogue</h4>
+                        <pre>DELETE FROM Commandes WHERE id_produit = 2;
+DELETE FROM Produits WHERE id = 2;</pre>
+
+                        <h4>26 à 28. Nettoyage divers</h4>
+                        <pre>DELETE FROM Commandes WHERE quantite = 1;
+DELETE FROM Commandes WHERE date_commande < '2025-01-11';
+DELETE FROM Commandes WHERE id = 99;</pre>
+
+                        <h3>Analyses Avancées</h3>
+                        
+                        <h4>29. Montant total des ventes</h4>
+                        <pre>SELECT SUM(prix*quantite) 
+FROM Commandes, Produits 
+WHERE Produits.id=Commandes.id_produit;</pre>
+
+                        <h4>30. Meilleur client (Quantité totale)</h4>
+                        <pre>SELECT c.id_client, c.nom_client, SUM(lc.quantite) AS total
+FROM Clients c
+JOIN Commandes co ON co.id_client = c.id_client
+GROUP BY c.id_client
+ORDER BY total DESC LIMIT 1;</pre>
+
+                        <h4>31. Commande la plus récente</h4>
+                        <pre>SELECT * FROM Commandes ORDER BY date_commande DESC LIMIT 1;</pre>
+                    `
+                }
+            };
+
+            // ÉLÉMENTS DOM
+            const burger = document.getElementById('burger');
+            const menuRight = document.getElementById('menuRight');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalClose = document.getElementById('modalClose');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const modalDownloadBtn = document.getElementById('modalDownloadBtn');
+            let currentTpId = null;
+
+            // GESTION MENU BURGER
+            if(burger) {
+                burger.addEventListener('click', () => {
+                    menuRight.classList.toggle('active');
+                });
+            }
+
+            // GESTION MODALE (Visualisation)
+            function openModal(tpId) {
+                const tp = tpContent[tpId];
+                if (!tp) return;
+                currentTpId = tpId;
+                modalTitle.textContent = tp.title;
+                modalBody.innerHTML = tp.content;
+                modalOverlay.classList.add('active');
+            }
+
+            function closeModal() {
+                modalOverlay.classList.remove('active');
+            }
+
+            document.querySelectorAll('.tp-preview').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation(); // Empêche le clic de traverser
+                    const card = e.target.closest('.tp-card');
+                    const tpId = card.getAttribute('data-tp');
+                    openModal(tpId);
+                });
+            });
+
+            [modalClose, modalCloseBtn, modalOverlay].forEach(el => {
+                if(el) {
+                    el.addEventListener('click', (e) => {
+                        if (e.target === el) closeModal();
+                    });
+                }
+            });
+
+            // GÉNÉRATION PDF
+            async function generatePDF(tpId) {
+                if (!window.jspdf) {
+                    alert("Erreur : La librairie PDF n'est pas chargée.");
+                    return;
+                }
+
+                try {
+                    const tp = tpContent[tpId];
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    
+                    const pageWidth = pdf.internal.pageSize.getWidth();
+                    const pageHeight = pdf.internal.pageSize.getHeight();
+                    const margin = 15;
+                    const maxWidth = pageWidth - (margin * 2);
+                    let yPosition = margin;
+
+                    // CONFIGURATION COULEUR : NOIR ET BLANC
+                    pdf.setTextColor(0, 0, 0);
+
+                    function checkPageBreak(height) {
+                        if (yPosition + height > pageHeight - margin) {
+                            pdf.addPage();
+                            yPosition = margin;
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    // TITRE DOCUMENT
+                    pdf.setFontSize(16);
+                    pdf.setFont(undefined, 'bold');
+                    const titleLines = pdf.splitTextToSize(tp.title, maxWidth);
+                    titleLines.forEach(line => {
+                        pdf.text(line, margin, yPosition);
+                        yPosition += 7;
+                    });
+                    yPosition += 10;
+                    
+                    // LIGNE DE SÉPARATION
+                    pdf.setLineWidth(0.5);
+                    pdf.line(margin, yPosition - 5, pageWidth - margin, yPosition - 5);
+
+                    // PARSING DU CONTENU HTML
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = tp.content;
+                    const elements = tempDiv.children;
+                    
+                    for (let element of elements) {
+                        const tagName = element.tagName.toLowerCase();
+                        const text = element.textContent.trim();
+                        
+                        if (!text && tagName !== 'pre') continue;
+
+                        checkPageBreak(10);
+
+                        if (tagName === 'h3') {
+                            yPosition += 8;
+                            pdf.setFontSize(14);
+                            pdf.setFont(undefined, 'bold');
+                            const lines = pdf.splitTextToSize(text, maxWidth);
+                            lines.forEach(line => {
+                                checkPageBreak(7);
+                                pdf.text(line, margin, yPosition);
+                                yPosition += 7;
+                            });
+                            yPosition += 2;
+                        } 
+                        else if (tagName === 'h4') {
+                            yPosition += 5;
+                            pdf.setFontSize(12);
+                            pdf.setFont(undefined, 'bold');
+                            const lines = pdf.splitTextToSize(text, maxWidth);
+                            lines.forEach(line => {
+                                checkPageBreak(6);
+                                pdf.text(line, margin, yPosition);
+                                yPosition += 6;
+                            });
+                            yPosition += 2;
+                        } 
+                        else if (tagName === 'p') {
+                            pdf.setFontSize(10);
+                            pdf.setFont(undefined, 'normal');
+                            const lines = pdf.splitTextToSize(text, maxWidth);
+                            lines.forEach(line => {
+                                checkPageBreak(5);
+                                pdf.text(line, margin, yPosition);
+                                yPosition += 5;
+                            });
+                            yPosition += 3;
+                        } 
+                        else if (tagName === 'ul' || tagName === 'ol') {
+                            const items = element.querySelectorAll('li');
+                            items.forEach((item, index) => {
+                                pdf.setFontSize(10);
+                                pdf.setFont(undefined, 'normal');
+                                const bullet = tagName === 'ul' ? '•' : `${index + 1}.`;
+                                const itemText = item.textContent.trim();
+                                const lines = pdf.splitTextToSize(itemText, maxWidth - 10);
+                                
+                                lines.forEach((line, lineIndex) => {
+                                    checkPageBreak(5);
+                                    if (lineIndex === 0) {
+                                        pdf.text(bullet, margin + 2, yPosition);
+                                        pdf.text(line, margin + 8, yPosition);
+                                    } else {
+                                        pdf.text(line, margin + 8, yPosition);
+                                    }
+                                    yPosition += 5;
+                                });
+                            });
+                            yPosition += 3;
+                        } 
+                        else if (tagName === 'pre') {
+                            checkPageBreak(20);
+                            pdf.setFontSize(9);
+                            pdf.setFont('courier', 'normal');
+                            
+                            // Fond gris léger
+                            pdf.setFillColor(245, 245, 245);
+                            
+                            const rawText = element.textContent;
+                            const codeLines = rawText.split('\n');
+                            const lineHeight = 4;
+                            const codeHeight = (codeLines.length * lineHeight) + 6;
+                            
+                            // Si le bloc est trop grand pour la page, on saute une page
+                            if (yPosition + codeHeight > pageHeight - margin) {
+                                pdf.addPage();
+                                yPosition = margin;
+                            }
+                            
+                            pdf.rect(margin, yPosition, maxWidth, codeHeight, 'F');
+                            yPosition += 4;
+                            
+                            // Reset text color to black just in case
+                            pdf.setTextColor(0, 0, 0);
+
+                            codeLines.forEach(line => {
+                                const cleanLine = line.replace(/\r/g, ''); // Nettoyage
+                                // Découpe si la ligne de code est trop longue
+                                const splitCode = pdf.splitTextToSize(cleanLine, maxWidth - 5);
+                                splitCode.forEach(subLine => {
+                                   pdf.text(subLine, margin + 3, yPosition);
+                                   yPosition += lineHeight; 
+                                });
+                            });
+                            yPosition += 4;
+                            pdf.setFont(undefined, 'normal');
+                        }
+                    }
+
+                    // PIED DE PAGE
+                    const pageCount = pdf.internal.getNumberOfPages();
+                    for (let i = 1; i <= pageCount; i++) {
+                        pdf.setPage(i);
+                        pdf.setFontSize(8);
+                        pdf.setTextColor(100, 100, 100);
+                        pdf.text(`Page ${i} / ${pageCount}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+                        pdf.text('Alexandre Marquant - BTS SIO', margin, pageHeight - 10);
+                    }
+
+                    // SAUVEGARDE DU PDF
+                    const fileName = tp.fileName || (tp.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.pdf');
+                    pdf.save(fileName);
+
+                } catch (error) {
+                    console.error("Erreur génération PDF:", error);
+                    alert("Une erreur est survenue lors de la création du PDF.");
+                }
+            }
+
+            // GESTION TÉLÉCHARGEMENT
+            document.querySelectorAll('.tp-download').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const card = e.target.closest('.tp-card');
+                    const tpId = card.getAttribute('data-tp');
+                    generatePDF(tpId);
+                });
+            });
+
+            // TÉLÉCHARGEMENT DEPUIS LA MODALE
+            if(modalDownloadBtn) {
+                modalDownloadBtn.addEventListener('click', () => {
+                    if (currentTpId) {
+                        generatePDF(currentTpId);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

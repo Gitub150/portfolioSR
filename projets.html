@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projets - Alexandre Marquant</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+        }
+
+        .bg-gradient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, transparent 70%);
+            animation: rotate 25s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1400px;
+            background: rgba(15, 15, 25, 0.7);
+            backdrop-filter: blur(30px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: 12px 30px;
+        }
+
+        nav .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-left a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-right {
+            list-style: none;
+            display: flex;
+            gap: 5px;
+        }
+
+        .menu-right li a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .menu-right li a:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .burger span {
+            width: 28px;
+            height: 2.5px;
+            background: white;
+            margin: 3px 0;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 140px 40px 80px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.7));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        .page-header p {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Projets en vedette */
+        .featured-project {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 0;
+            margin-bottom: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .featured-project:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .project-content {
+            padding: 40px;
+        }
+
+        .project-content h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .project-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 25px;
+        }
+
+        .project-tech {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .tech-tag {
+            background: rgba(99, 102, 241, 0.2);
+            color: #c7d2fe;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .project-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(236, 72, 153, 0.3));
+            color: white;
+            padding: 14px 28px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .project-link:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(236, 72, 153, 0.5));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Grille de projets secondaires */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 35px;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .project-card-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .project-card-content {
+            padding: 30px;
+        }
+
+        .project-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: white;
+        }
+
+        .project-card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 968px) {
+            .menu-right {
+                position: fixed;
+                left: -100%;
+                top: 80px;
+                width: calc(100% - 40px);
+                background: rgba(15, 15, 25, 0.98);
+                flex-direction: column;
+                padding: 20px;
+                border-radius: 20px;
+                transition: left 0.4s ease;
+                margin-left: 20px;
+            }
+
+            .menu-right.active {
+                left: 0;
+            }
+
+            .burger {
+                display: flex;
+            }
+
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 120px 20px 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="grid-overlay"></div>
+
+    <nav>
+        <div class="nav-container">
+            <ul class="menu-left">
+                <li><a href="index.html">AM</a></li>
+            </ul>
+            
+            <ul class="menu-right" id="menuRight">
+                <li><a href="index.html">🏠 Accueil</a></li>
+                <li><a href="tp.html">💻 TPs</a></li>
+                <li><a href="cv.html">📋 CV</a></li>
+                <li><a href="index.html#contact">📧 Contact</a></li>
+            </ul>
+
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>🚀 Mes Projets</h1>
+            <p>Découvrez mes réalisations en infrastructure réseau, cybersécurité et administration systèmes dans le cadre de ma formation SISR</p>
+        </div>
+
+        <!-- Projet en vedette -->
+        <div class="featured-project">
+            <div class="project-image">🌐</div>
+            <div class="project-content">
+                <h2>Infrastructure Réseau Entreprise</h2>
+                <p>
+                    Conception et déploiement complet d'une infrastructure réseau sécurisée pour une PME de 50 utilisateurs. 
+                    Le projet inclut la segmentation VLAN, la mise en place d'un Active Directory, la configuration de serveurs 
+                    Windows Server 2022 et Debian, ainsi qu'un système de sauvegarde automatisé. J'ai également implémenté 
+                    un pare-feu pfSense avec VPN IPsec pour les accès distants et configuré un système de monitoring avec 
+                    Zabbix pour surveiller l'état du réseau en temps réel.
+                </p>
+                <div class="project-tech">
+                    <span class="tech-tag">Windows Server 2022</span>
+                    <span class="tech-tag">Active Directory</span>
+                    <span class="tech-tag">pfSense</span>
+                    <span class="tech-tag">VLAN</span>
+                    <span class="tech-tag">Zabbix</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="project-link">
+                        Documentation →
+                    </a>
+                    <a href="#" class="project-link">
+                        Schéma réseau
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Autres projets -->
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-card-image">🔒</div>
+                <div class="project-card-content">
+                    <h3>Audit de Sécurité Réseau</h3>
+                    <p>Réalisation d'un audit de sécurité complet avec scan de vulnérabilités, tests de pénétration et recommandations de sécurisation. Utilisation de Nmap, Wireshark et OpenVAS.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">Kali Linux</span>
+                        <span class="tech-tag">Nmap</span>
+                        <span class="tech-tag">Wireshark</span>
+                    </div>
+                    <a href="#" class="project-link">Voir le rapport →</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-card-image" style="background: linear-gradient(135deg, #10b981, #22c55e);">💾</div>
+                <div class="project-card-content">
+                    <h3>Solution de Sauvegarde Centralisée</h3>
+                    <p>Mise en place d'une infrastructure de sauvegarde avec Veeam Backup et scripts PowerShell pour automatiser les sauvegardes incrémentales et différentielles.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">Veeam</span>
+                        <span class="tech-tag">PowerShell</span>
+                        <span class="tech-tag">Hyper-V</span>
+                    </div>
+                    <a href="#" class="project-link">Voir le projet →</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-card-image" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">📊</div>
+                <div class="project-card-content">
+                    <h3>Système de Monitoring Réseau</h3>
+                    <p>Déploiement d'une solution de supervision complète avec Zabbix pour monitorer serveurs, switchs et équipements réseau avec alertes automatiques.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">Zabbix</span>
+                        <span class="tech-tag">SNMP</span>
+                        <span class="tech-tag">MySQL</span>
+                    </div>
+                    <a href="#" class="project-link">Voir le projet →</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-card-image" style="background: linear-gradient(135deg, #06b6d4, #0ea5e9);">🖥️</div>
+                <div class="project-card-content">
+                    <h3>Virtualisation avec Proxmox</h3>
+                    <p>Configuration d'un cluster Proxmox VE pour héberger plusieurs machines virtuelles et conteneurs LXC avec répartition de charge et haute disponibilité.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">Proxmox VE</span>
+                        <span class="tech-tag">LXC</span>
+                        <span class="tech-tag">ZFS</span>
+                    </div>
+                    <a href="#" class="project-link">Voir le projet →</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-card-image" style="background: linear-gradient(135deg, #ec4899, #f43f5e);">🔐</div>
+                <div class="project-card-content">
+                    <h3>Serveur VPN Multi-Sites</h3>
+                    <p>Implémentation d'une solution VPN OpenVPN pour connecter de manière sécurisée 3 sites distants avec authentification par certificats.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">OpenVPN</span>
+                        <span class="tech-tag">PKI</span>
+                        <span class="tech-tag">iptables</span>
+                    </div>
+                    <a href="#" class="project-link">Voir le projet →</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-card-image" style="background: linear-gradient(135deg, #a855f7, #d946ef);">📡</div>
+                <div class="project-card-content">
+                    <h3>Configuration Switchs Cisco</h3>
+                    <p>Configuration avancée de switchs Cisco avec VLANs, Spanning Tree, agrégation de liens et sécurisation des ports (Port Security, DHCP Snooping).</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">Cisco IOS</span>
+                        <span class="tech-tag">VLAN</span>
+                        <span class="tech-tag">STP</span>
+                    </div>
+                    <a href="#" class="project-link">Voir le projet →</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        $(document).ready(function() {
+            $("#burger").click(function() {
+                $(this).toggleClass("active");
+                $("#menuRight").toggleClass("active");
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            $('.project-card, .featured-project').each(function(index) {
+                $(this).css({
+                    'opacity': '0',
+                    'transform': 'translateY(30px)',
+                    'transition': `all 0.6s ease ${index * 0.1}s`
+                });
+                observer.observe(this);
+            });
+        });
+    </script>
+</body>
+</html>
